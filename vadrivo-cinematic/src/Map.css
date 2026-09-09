@@ -1,0 +1,647 @@
+/* ================================================================
+   VADRIVO — GLOBAL MAP
+   Detailed SVG / Interactive World Map
+================================================================ */
+
+.vadrivo-global-map {
+  position: absolute;
+  z-index: 5;
+
+  width: min(70vw, 1100px);
+
+  right: -3vw;
+  top: 65%;
+
+  transform: translateY(-50%);
+
+  user-select: none;
+  pointer-events: auto;
+}
+
+
+/* ================================================================
+   MAP STAGE
+================================================================ */
+
+.vadrivo-map-stage {
+  position: relative;
+
+  width: 100%;
+
+  overflow: visible;
+}
+
+
+/* ================================================================
+   TOP META
+================================================================ */
+
+.vadrivo-map-meta {
+  position: absolute;
+
+  left: 0;
+  top: -28px;
+
+  width: 100%;
+
+  display: flex;
+  justify-content: space-between;
+
+  pointer-events: none;
+
+  color: #4d525b;
+
+  font-family: "DM Mono", monospace;
+  font-size: 8px;
+
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+
+/* ================================================================
+   SVG
+================================================================ */
+
+.vadrivo-world-svg {
+  display: block;
+
+  width: 100%;
+  height: auto;
+
+  overflow: visible;
+
+  shape-rendering: geometricPrecision;
+}
+
+
+/* ================================================================
+   BACKGROUND GRID
+================================================================ */
+
+.vadrivo-map-grid {
+  opacity: 0.15;
+}
+
+.vadrivo-map-grid line {
+  stroke: rgba(255, 255, 255, 0.09);
+
+  stroke-width: 0.35;
+
+  vector-effect: non-scaling-stroke;
+}
+
+
+/* ================================================================
+   COUNTRIES
+================================================================ */
+
+.vadrivo-countries {
+  opacity: 0.98;
+}
+
+.vadrivo-country {
+  fill: url(#vadrivo-land-gradient);
+
+  stroke: rgba(255, 255, 255, 0.11);
+
+  stroke-width: 0.45;
+
+  vector-effect: non-scaling-stroke;
+
+  transition:
+    fill 0.35s ease,
+    stroke 0.35s ease,
+    opacity 0.35s ease;
+}
+
+
+/* Slightly brighten country on hover */
+
+.vadrivo-country:hover {
+  fill: #202329;
+
+  stroke: rgba(255, 255, 255, 0.2);
+}
+
+
+/* ================================================================
+   COUNTRY BORDER LAYER
+================================================================ */
+
+.vadrivo-country-borders {
+  pointer-events: none;
+
+  opacity: 0.42;
+}
+
+.vadrivo-country-border {
+  fill: none;
+
+  stroke: rgba(255, 255, 255, 0.08);
+
+  stroke-width: 0.25;
+
+  vector-effect: non-scaling-stroke;
+}
+
+
+/* ================================================================
+   CONNECTION NETWORK
+================================================================ */
+
+.vadrivo-network-lines {
+  pointer-events: none;
+
+  opacity: 0.25;
+}
+
+.vadrivo-network-lines line {
+  stroke: #31ff50;
+
+  stroke-width: 0.95;
+
+  stroke-dasharray: 3 5;
+
+  vector-effect: non-scaling-stroke;
+
+  animation: vadrivo-network-flow 20s linear infinite;
+}
+
+
+@keyframes vadrivo-network-flow {
+  to {
+    stroke-dashoffset: -80;
+  }
+}
+
+
+/* ================================================================
+   LOCATION
+================================================================ */
+
+.vadrivo-location {
+  cursor: pointer;
+
+  outline: none;
+
+  transform-box: fill-box;
+  transform-origin: center;
+
+  transition: opacity 0.25s ease;
+}
+
+
+/* ================================================================
+   MARKER GLOW
+================================================================ */
+
+.vadrivo-marker-glow {
+  fill: rgba(49, 84, 255, 0.5);
+
+  pointer-events: none;
+
+  opacity: 0.75;
+}
+
+
+/* ================================================================
+   MARKER PULSE
+================================================================ */
+
+.vadrivo-marker-pulse {
+  fill: none;
+
+  stroke: #3154ff;
+
+  stroke-width: 0.7;
+
+  vector-effect: non-scaling-stroke;
+
+  opacity: 0;
+
+  animation:
+    vadrivo-location-pulse
+    2.4s
+    ease-out
+    infinite;
+}
+
+
+@keyframes vadrivo-location-pulse {
+
+  0% {
+    r: 3px;
+
+    opacity: 0.75;
+  }
+
+  70% {
+    r: 13px;
+
+    opacity: 0;
+  }
+
+  100% {
+    r: 13px;
+
+    opacity: 0;
+  }
+
+}
+
+
+/* ================================================================
+   MARKER RING
+================================================================ */
+
+.vadrivo-marker-ring {
+  fill: rgba(49, 84, 255, 0.13);
+
+  stroke: #3154ff;
+
+  stroke-width: 0.8;
+
+  vector-effect: non-scaling-stroke;
+
+  transition:
+    r 0.25s ease,
+    fill 0.25s ease;
+}
+
+
+/* ================================================================
+   MARKER CORE
+================================================================ */
+
+.vadrivo-marker-core {
+  fill: #3154ff;
+
+  stroke: #ffffff;
+
+  stroke-width: 0.45;
+
+  vector-effect: non-scaling-stroke;
+
+  transition:
+    r 0.25s ease,
+    fill 0.25s ease;
+}
+
+
+/* ================================================================
+   ACTIVE MARKER
+================================================================ */
+
+.vadrivo-location:hover .vadrivo-marker-core,
+.vadrivo-location:focus .vadrivo-marker-core,
+.vadrivo-location.is-active .vadrivo-marker-core {
+  r: 3.4;
+}
+
+.vadrivo-location:hover .vadrivo-marker-ring,
+.vadrivo-location:focus .vadrivo-marker-ring,
+.vadrivo-location.is-active .vadrivo-marker-ring {
+  r: 6.2;
+
+  fill: rgba(66, 89, 203, 0.2);
+}
+
+
+/* ================================================================
+   TOOLTIP
+================================================================ */
+
+.vadrivo-map-tooltip {
+  pointer-events: none;
+}
+
+
+.vadrivo-map-tooltip rect {
+  fill: rgba(7, 7, 8, 0.96);
+
+  stroke: rgba(255, 255, 255, 0.18);
+
+  stroke-width: 0.7;
+
+  vector-effect: non-scaling-stroke;
+}
+
+
+/* City */
+
+.vadrivo-map-tooltip .tooltip-city {
+  fill: #ffffff;
+
+  font-family: "DM Mono", monospace;
+
+  font-size: 12px;
+
+  font-weight: 500;
+
+  letter-spacing: 0.07em;
+}
+
+
+/* Country */
+
+.vadrivo-map-tooltip .tooltip-country {
+  fill: #737985;
+
+  font-family: "DM Mono", monospace;
+
+  font-size: 8px;
+
+  letter-spacing: 0.04em;
+}
+
+
+/* Divider */
+
+.vadrivo-map-tooltip line {
+  stroke: rgba(255, 255, 255, 0.12);
+
+  stroke-width: 0.6;
+}
+
+
+/* Message */
+
+.vadrivo-map-tooltip .tooltip-message {
+  fill: #9ca1ab;
+
+  font-family: "DM Mono", monospace;
+
+  font-size: 7px;
+
+  letter-spacing: 0.03em;
+}
+
+
+/* ================================================================
+   CROSSHAIR
+================================================================ */
+
+.vadrivo-map-crosshair {
+  opacity: 0.12;
+
+  pointer-events: none;
+}
+
+.vadrivo-map-crosshair line {
+  stroke: #ffffff;
+
+  stroke-width: 0.35;
+
+  vector-effect: non-scaling-stroke;
+}
+
+
+/* ================================================================
+   LIVE CARD
+================================================================ */
+
+.vadrivo-map-live-card {
+  position: absolute;
+
+  left: 2%;
+  bottom: 6%;
+
+  min-width: 210px;
+
+  padding: 17px 18px;
+
+  background: rgba(7, 7, 8, 0.9);
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  backdrop-filter: blur(14px);
+
+  -webkit-backdrop-filter: blur(14px);
+
+  pointer-events: none;
+}
+
+
+/* Small label */
+
+.vadrivo-map-live-card .live-label {
+  display: block;
+
+  margin-bottom: 9px;
+
+  color: #5e6470;
+
+  font-family: "DM Mono", monospace;
+
+  font-size: 8px;
+
+  letter-spacing: 0.13em;
+
+  text-transform: uppercase;
+}
+
+
+/* Location */
+
+.vadrivo-map-live-card strong {
+  display: block;
+
+  color: #ffffff;
+
+  font-family: inherit;
+
+  font-size: 19px;
+
+  font-weight: 500;
+
+  line-height: 1;
+
+  letter-spacing: -0.02em;
+}
+
+
+/* Description */
+
+.vadrivo-map-live-card small {
+  display: block;
+
+  margin-top: 8px;
+
+  color: #737985;
+
+  font-family: "DM Mono", monospace;
+
+  font-size: 8px;
+
+  line-height: 1.4;
+
+  letter-spacing: 0.03em;
+}
+
+
+/* ================================================================
+   FOOTER
+================================================================ */
+
+.vadrivo-map-footer {
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin-top: 12px;
+
+  color: #4e535c;
+
+  font-family: "DM Mono", monospace;
+
+  font-size: 8px;
+
+  letter-spacing: 0.1em;
+
+  text-transform: uppercase;
+}
+
+
+/* ================================================================
+   TABLET
+================================================================ */
+
+@media (max-width: 1100px) {
+
+  .vadrivo-global-map {
+    width: min(68vw, 850px);
+
+    right: -2vw;
+  }
+
+  .vadrivo-map-live-card {
+    min-width: 180px;
+
+    padding: 14px 15px;
+  }
+
+}
+
+
+/* ================================================================
+   MOBILE
+================================================================ */
+
+@media (max-width: 900px) {
+
+  .vadrivo-global-map {
+    position: relative;
+
+    width: 100%;
+
+    right: auto;
+    top: auto;
+
+    transform:  translateY(50px);;
+
+    margin-top: 45px;
+  }
+
+
+  .vadrivo-map-stage {
+    width: 100%;
+  }
+
+
+  .vadrivo-map-meta {
+    top: -23px;
+
+    font-size: 7px;
+  }
+
+
+  .vadrivo-world-svg {
+    width: 100%;
+  }
+
+
+  .vadrivo-map-live-card {
+    left: 2%;
+
+    bottom: 8%;
+
+    min-width: 165px;
+
+    padding: 12px 13px;
+  }
+
+
+  .vadrivo-map-live-card strong {
+    font-size: 15px;
+  }
+
+
+  .vadrivo-map-live-card small {
+    font-size: 7px;
+  }
+
+
+  .vadrivo-map-footer {
+    margin-top: 9px;
+
+    font-size: 6px;
+
+    gap: 10px;
+  }
+
+}
+
+
+/* ================================================================
+   SMALL PHONES
+================================================================ */
+
+@media (max-width: 520px) {
+
+  .vadrivo-global-map {
+    margin-top: 35px;
+  }
+
+
+  .vadrivo-map-meta {
+    font-size: 6px;
+  }
+
+
+  .vadrivo-map-live-card {
+    min-width: 150px;
+
+    padding: 10px 11px;
+  }
+
+
+  .vadrivo-map-live-card strong {
+    font-size: 14px;
+  }
+
+
+  .vadrivo-map-footer {
+    font-size: 5.5px;
+  }
+
+}
+
+
+/* ================================================================
+   REDUCED MOTION
+================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .vadrivo-marker-pulse {
+    animation: none;
+  }
+
+  .vadrivo-network-lines line {
+    animation: none;
+  }
+
+}

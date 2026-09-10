@@ -98,9 +98,11 @@ function CinematicEarth() {
       map: earthTexture,
       normalMap: normalTexture,
       specularMap: specularTexture,
-      specular: new THREE.Color("#34506d"),
-      shininess: 16,
-      bumpScale: 0.025
+      specular: new THREE.Color("#2a4058"),
+      shininess: 2,
+      bumpScale: 0.012,
+      transparent: true,
+      opacity: 0.92
     });
 
     const earth = new THREE.Mesh(

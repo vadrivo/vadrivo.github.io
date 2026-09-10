@@ -324,19 +324,35 @@ function CinematicEarth() {
       mouseX += (targetX - mouseX) * 0.025;
       mouseY += (targetY - mouseY) * 0.025;
 
-      if (!reducedMotion) {
-        // Very slow rotation so India remains visible as the focal point.
-        earth.rotation.y += 0.0015;
-        clouds.rotation.y += 0.0019;
+      /*
+       * EARTH ROTATION
+       * Keep the globe rotating continuously on desktop and mobile.
+       * Earth rotation is intentionally independent of
+       * prefers-reduced-motion so the laptop cannot freeze the globe.
+       */
+      const desktop = window.innerWidth > 900;
 
+      const earthSpeed = desktop ? 0.0018 : 0.00028;
+      const cloudSpeed = desktop ? 0.0024 : 0.00038;
+
+      earth.rotation.y += earthSpeed;
+      clouds.rotation.y += cloudSpeed;
+
+      /*
+       * Decorative pulse animation still respects the user's
+       * reduced-motion preference.
+       */
+      if (!reducedMotion) {
         pulseTime += 0.045;
 
         const pulseScale =
           1 + (Math.sin(pulseTime) * 0.5 + 0.5) * 0.9;
 
         pulse.scale.setScalar(pulseScale);
+
         pulseMaterial.opacity =
-          0.20 + (Math.sin(pulseTime) * 0.5 + 0.5) * 0.38;
+          0.20 +
+          (Math.sin(pulseTime) * 0.5 + 0.5) * 0.38;
       }
 
       // Subtle mouse tilt without moving the globe away from the heading.

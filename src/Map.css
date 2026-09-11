@@ -147,25 +147,42 @@
 
 
 /* ================================================================
-   CONNECTION NETWORK
+   CONNECTION NETWORK — DESKTOP + MOBILE
 ================================================================ */
 
 .vadrivo-network-lines {
+  display: block !important;
+  visibility: visible !important;
   pointer-events: none;
-
-  opacity: 0.25;
+  opacity: 1 !important;
 }
 
-.vadrivo-network-lines line {
-  stroke: #31ff50;
+.vadrivo-network-line {
+  display: block !important;
+  visibility: visible !important;
 
-  stroke-width: 0.95;
+  fill: none !important;
+  stroke: #31ff50c4 !important;
 
-  stroke-dasharray: 3 5;
+  stroke-width: 1.2 !important;
+  stroke-dasharray: 4 6 !important;
+  stroke-linecap: round;
 
   vector-effect: non-scaling-stroke;
 
-  animation: vadrivo-network-flow 20s linear infinite;
+  opacity: 0.75 !important;
+
+  animation: vadrivo-network-flow 12s linear infinite;
+}
+
+@keyframes vadrivo-network-flow {
+  from {
+    stroke-dashoffset: 0;
+  }
+
+  to {
+    stroke-dashoffset: -80;
+  }
 }
 
 
@@ -640,7 +657,7 @@
     animation: none;
   }
 
-  .vadrivo-network-lines line {
+  .vadrivo-network-line {
     animation: none;
   }
 

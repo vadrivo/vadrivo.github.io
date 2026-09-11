@@ -60,7 +60,7 @@ function CinematicEarth() {
       powerPreference: "high-performance"
     });
 
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setClearColor(0x000000, 0);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -292,7 +292,7 @@ function CinematicEarth() {
 
       renderer.setSize(width, height);
       renderer.setPixelRatio(
-        Math.min(window.devicePixelRatio, 2)
+        Math.min(window.devicePixelRatio, 1.5)
       );
     };
 
@@ -421,70 +421,90 @@ function CinematicEarth() {
 function useSceneProgress(
   ref: React.RefObject<HTMLElement | null>
 ) {
-  const [progress, setProgress] =
-    useState(0);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const el = ref.current;
-
     if (!el) return;
 
     let raf = 0;
+    let target = 0;
+    let current = 0;
+    let active = true;
 
-    const update = () => {
-      const r =
-        el.getBoundingClientRect();
+    const readTarget = () => {
+      const r = el.getBoundingClientRect();
 
-      const distance =
-        Math.max(
-          1,
-          r.height - innerHeight
-        );
+      const distance = Math.max(
+        1,
+        r.height - window.innerHeight
+      );
 
-      const p =
-        Math.min(
-          1,
-          Math.max(
-            0,
-            -r.top / distance
-          )
-        );
+      target = Math.min(
+        1,
+        Math.max(0, -r.top / distance)
+      );
+    };
 
-      setProgress(p);
+    const tick = () => {
+      if (!active) return;
+
+      // Smooth the scroll value instead of feeding raw scroll
+      // positions directly into React/rendered transforms.
+      current += (target - current) * 0.14;
+
+      if (Math.abs(target - current) < 0.0005) {
+        current = target;
+      }
+
+      setProgress(prev =>
+        Math.abs(prev - current) > 0.001
+          ? current
+          : prev
+      );
+
+      raf = requestAnimationFrame(tick);
     };
 
     const onScroll = () => {
-      cancelAnimationFrame(raf);
-
-      raf =
-        requestAnimationFrame(update);
+      readTarget();
     };
 
-    update();
+    const onResize = () => {
+      readTarget();
+    };
 
-    addEventListener(
-      "scroll",
-      onScroll,
-      { passive: true }
+    const observer = new IntersectionObserver(
+      entries => {
+        active = entries[0]?.isIntersecting ?? true;
+
+        if (active && !raf) {
+          raf = requestAnimationFrame(tick);
+        }
+
+        if (!active && raf) {
+          cancelAnimationFrame(raf);
+          raf = 0;
+        }
+      },
+      { rootMargin: "25% 0px 25% 0px" }
     );
 
-    addEventListener(
-      "resize",
-      onScroll
-    );
+    readTarget();
+    setProgress(target);
+
+    observer.observe(el);
+    addEventListener("scroll", onScroll, { passive: true });
+    addEventListener("resize", onResize);
+
+    raf = requestAnimationFrame(tick);
 
     return () => {
+      active = false;
       cancelAnimationFrame(raf);
-
-      removeEventListener(
-        "scroll",
-        onScroll
-      );
-
-      removeEventListener(
-        "resize",
-        onScroll
-      );
+      observer.disconnect();
+      removeEventListener("scroll", onScroll);
+      removeEventListener("resize", onResize);
     };
   }, [ref]);
 
@@ -743,11 +763,8 @@ function App() {
   const [submitted, setSubmitted] =
     useState(false);
 
-  const [mouse, setMouse] =
-    useState({
-      x: 0,
-      y: 0
-    });
+  const heroRef =
+    useRef<HTMLElement>(null);
 
   const methodRef =
     useRef<HTMLElement>(null);
@@ -762,50 +779,82 @@ function App() {
     useSceneProgress(workRef);
 
   useEffect(() => {
-    const fn = () =>
-      setScrolled(
-        scrollY > 70
-      );
+    let raf = 0;
+    let last = false;
 
-    addEventListener(
-      "scroll",
-      fn,
-      { passive: true }
-    );
+    const update = () => {
+      raf = 0;
+      const next = window.scrollY > 70;
 
-    return () =>
-      removeEventListener(
-        "scroll",
-        fn
-      );
+      if (next !== last) {
+        last = next;
+        setScrolled(next);
+      }
+    };
+
+    const onScroll = () => {
+      if (!raf) {
+        raf = requestAnimationFrame(update);
+      }
+    };
+
+    update();
+    addEventListener("scroll", onScroll, { passive: true });
+
+    return () => {
+      removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(raf);
+    };
   }, []);
 
   useEffect(() => {
-    const fn = (
-      e: MouseEvent
-    ) =>
-      setMouse({
-        x:
-          e.clientX /
-            innerWidth -
-          0.5,
+    const hero = heroRef.current;
+    if (!hero || matchMedia("(pointer: coarse)").matches) return;
 
-        y:
-          e.clientY /
-            innerHeight -
-          0.5
-      });
+    let targetX = 0;
+    let targetY = 0;
+    let currentX = 0;
+    let currentY = 0;
+    let raf = 0;
 
-    addEventListener(
-      "mousemove",
-      fn
-    );
+    const move = (e: MouseEvent) => {
+      targetX = e.clientX / window.innerWidth - 0.5;
+      targetY = e.clientY / window.innerHeight - 0.5;
+    };
 
-    return () =>
-      removeEventListener(
-        "mousemove",
-        fn
-      );
+    const tick = () => {
+      currentX += (targetX - currentX) * 0.075;
+      currentY += (targetY - currentY) * 0.075;
+
+      const orb = hero.querySelector<HTMLElement>(".orb-b");
+      const panelA = hero.querySelector<HTMLElement>(".panel-a");
+      const panelB = hero.querySelector<HTMLElement>(".panel-b");
+
+      if (orb) {
+        orb.style.transform =
+          `translate3d(${currentX * -80}px,${currentY * -80}px,0)`;
+      }
+
+      if (panelA) {
+        panelA.style.transform =
+          `translate3d(${currentX * -25}px,${currentY * -18}px,0) rotate(-9deg)`;
+      }
+
+      if (panelB) {
+        panelB.style.transform =
+          `translate3d(${currentX * 30}px,${currentY * 24}px,0) rotate(8deg)`;
+      }
+
+      raf = requestAnimationFrame(tick);
+    };
+
+    addEventListener("mousemove", move, { passive: true });
+    raf = requestAnimationFrame(tick);
+
+    return () => {
+      removeEventListener("mousemove", move);
+      cancelAnimationFrame(raf);
+    };
   }, []);
 
   useEffect(() => {
@@ -817,6 +866,36 @@ function App() {
         "";
     };
   }, [loaded]);
+  useEffect(() => {
+    const onAnchorClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      const link = target?.closest<HTMLAnchorElement>('a[href^="#"]');
+
+      if (!link) return;
+
+      const href = link.getAttribute("href");
+      if (!href || href === "#") return;
+
+      const destination = document.querySelector(href);
+      if (!destination) return;
+
+      e.preventDefault();
+
+      destination.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+      history.replaceState(null, "", href);
+    };
+
+    document.addEventListener("click", onAnchorClick);
+
+    return () => {
+      document.removeEventListener("click", onAnchorClick);
+    };
+  }, []);
+
 
   return (
     <>
@@ -900,7 +979,7 @@ function App() {
             HERO
         ================================================= */}
 
-        <section className="hero scene">
+        <section className="hero scene" ref={heroRef}>
 
           <div className="hero-grid" />
 
@@ -912,21 +991,9 @@ function App() {
 
           {/* SECOND ATMOSPHERIC ORB */}
 
-          <div
-            className="hero-orb orb-b"
-            style={{
-              transform:
-                `translate3d(${mouse.x * -80}px,${mouse.y * -80}px,0)`
-            }}
-          />
+          <div className="hero-orb orb-b" />
 
-          <div
-            className="hero-panel panel-a"
-            style={{
-              transform:
-                `translate3d(${mouse.x * -25}px,${mouse.y * -18}px,0) rotate(-9deg)`
-            }}
-          >
+          <div className="hero-panel panel-a">
             <span>
               01 / DESIGN
             </span>
@@ -938,13 +1005,7 @@ function App() {
             </b>
           </div>
 
-          <div
-            className="hero-panel panel-b"
-            style={{
-              transform:
-                `translate3d(${mouse.x * 30}px,${mouse.y * 24}px,0) rotate(8deg)`
-            }}
-          >
+          <div className="hero-panel panel-b">
             <span>
               02 / BUILD
             </span>

@@ -298,11 +298,13 @@ export function GlobalMap() {
 
               return (
                 <line
-                  key={`connection-${location.id}`}
+                  key={`connection-${location.id}-${CLIENT_LOCATIONS[index + 1].id}`}
+                  className="vadrivo-network-line"
                   x1={start[0]}
                   y1={start[1]}
                   x2={end[0]}
                   y2={end[1]}
+                  vectorEffect="non-scaling-stroke"
                 />
               );
             })}

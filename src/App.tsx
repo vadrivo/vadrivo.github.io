@@ -1365,69 +1365,175 @@ function App() {
 
         </section>
 
-        {/* =================================================
-            PROCESS FLOW
-        ================================================= */}
 
-        <section
-          className="flow scene"
-          id="process"
-        >
 
-          <div className="flow-copy">
+        
+        {/* =========================================================
+            05 — FROM IDEA TO LAUNCH
+            ========================================================= */}
 
-            <span>
+        <section className="vadrivo-process scene" id="process">
+
+          {/* LEFT SIDE */}
+          <div className="process-copy">
+
+            <span className="process-eyebrow">
               05 — FROM IDEA TO LAUNCH
             </span>
 
-            <h2>
-              MAKE IT
-              <br />
-              <i>MOVE.</i>
+            <h2 className="process-title">
+              <span>MAKE IT</span>
+              <span>MOVE.</span>
             </h2>
+
+            <p>
+              One continuous journey from the first idea
+              <br />
+              to measurable digital growth.
+            </p>
 
           </div>
 
-          <div className="flow-map">
 
-            {[
-              "IDEA",
-              "DESIGN",
-              "CODE",
-              "LAUNCH",
-              "GROWTH"
-            ].map(
-              (x, i) => (
-                <div
-                  className="flow-node"
-                  key={x}
-                  style={
-                    {
-                      "--i": i
-                    } as React.CSSProperties
-                  }
-                >
+          {/* RIGHT SIDE — CIRCULAR JOURNEY */}
+          <div className="process-orbit">
 
-                  <span>
-                    0{i + 1}
-                  </span>
+            <div className="orbit-ring orbit-ring-outer" />
+            <div className="orbit-ring orbit-ring-main" />
+            <div className="orbit-ring orbit-ring-inner" />
 
-                  <strong>
-                    {x}
-                  </strong>
+            <div className="orbit-dashed" />
+
+            <div className="orbit-center">
+              <span />
+            </div>
+
+
+            {/* 01 — IDEA */}
+            <div className="orbit-stage stage-01">
+
+              <div className="stage-icon">
+                <span>✦</span>
+              </div>
+
+              <div className="stage-info">
+                <small>01</small>
+                <strong>IDEA</strong>
+                <em>The spark</em>
+              </div>
+
+            </div>
+
+
+            {/* 02 — DESIGN */}
+            <div className="orbit-stage stage-02">
+
+              <div className="stage-icon">
+                <span>◉</span>
+              </div>
+
+              <div className="stage-info">
+                <small>02</small>
+                <strong>DESIGN</strong>
+                <em>The shape</em>
+              </div>
+
+            </div>
+
+
+            {/* 03 — CODE */}
+            <div className="orbit-stage stage-03">
+
+              <div className="stage-icon">
+                <span>&lt;/&gt;</span>
+              </div>
+
+              <div className="stage-info">
+                <small>03</small>
+                <strong>CODE</strong>
+                <em>The engine</em>
+              </div>
+
+            </div>
+
+
+            {/* 04 — LAUNCH */}
+            <div className="orbit-stage stage-04">
+
+              <div className="stage-icon">
+                <span>↗</span>
+              </div>
+
+              <div className="stage-info">
+                <small>04</small>
+                <strong>LAUNCH</strong>
+                <em>The world</em>
+              </div>
+
+            </div>
+
+
+            {/* 05 — GROWTH */}
+            <div className="orbit-stage stage-05">
+
+              <div className="stage-icon">
+                <span>▮▮▮</span>
+              </div>
+
+              <div className="stage-info">
+                <small>05</small>
+                <strong>GROWTH</strong>
+                <em>The future</em>
+              </div>
+
+            </div>
+
+
+            {/* SMALL MOVING CAR */}
+            <div className="orbit-car-path">
+
+              <div className="orbit-car">
+
+                <div className="car-body">
+
+                  <div className="car-window" />
+                  <div className="car-window car-window-back" />
+
+                  <div className="car-light car-light-front" />
+                  <div className="car-light car-light-back" />
+
+                  <div className="car-wheel car-wheel-1" />
+                  <div className="car-wheel car-wheel-2" />
 
                 </div>
-              )
-            )}
 
-            <div className="flow-line" />
+              </div>
 
-            <div className="flow-pulse" />
+            </div>
+
+          </div>
+
+
+          {/* BOTTOM */}
+          <div className="process-footer">
+
+            <div className="process-loop">
+              ↻
+            </div>
+
+            <span>THE JOURNEY CONTINUES</span>
+
+            <div className="process-footer-line" />
+
+            <span className="process-vadrivo">
+              VADRIVO&nbsp; →
+            </span>
 
           </div>
 
         </section>
 
+        
         {/* =================================================
             MANIFESTO
         ================================================= */}

@@ -981,7 +981,22 @@ function App() {
 
         <section className="hero scene" ref={heroRef}>
 
-          <div className="hero-grid" />
+          <div className="hero-grid" aria-hidden="true">
+            {Array.from({ length: 90 }, (_, i) => (
+              <span
+                key={i}
+                className="hero-star"
+                style={{
+                  left: `${(i * 37.7) % 100}%`,
+                  top: `${(i * 61.3) % 100}%`,
+                  width: `${i % 7 === 0 ? 2 : 1}px`,
+                  height: `${i % 7 === 0 ? 2 : 1}px`,
+                  animationDelay: `${-((i * 0.73) % 7)}s`,
+                  animationDuration: `${5.5 + (i % 6) * 0.8}s`
+                }}
+              />
+            ))}
+          </div>
 
           {/* PREMIUM 3D EARTH */}
 
@@ -2061,4 +2076,4 @@ function App() {
   );
 }
 
-export default App;
+export default App
